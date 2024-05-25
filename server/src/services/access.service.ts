@@ -4,6 +4,7 @@ import crypto from "crypto";
 import JWT from "jsonwebtoken";
 import { IAccessRepository } from "../interfaces/access.interface";
 import { ISessionRepository } from "../interfaces/session.interface";
+import { Response, response } from "express";
 
 export class AccessService {
     private _accessRepo: IAccessRepository;
@@ -99,7 +100,7 @@ export class AccessService {
         return null;
     }
 
-    async signIn(user: Login, clientIp: any, clientAgent: any) {
+    async signIn(user: Login, clientIp: any, clientAgent: any, res: Response) {
         const userExists = await this._accessRepo.findUserByEmail(user.email);
 
         if (!userExists) {
@@ -150,6 +151,13 @@ export class AccessService {
 
         if (!session) throw new Error("Error: session");
 
+        res.cookie("refreshToken", tokens.refreshToken, {
+            httpOnly: true,
+            secure: false,
+            path: "/",
+            sameSite: "strict",
+        });
+
         return {
             user: {
                 id: userExists.id,
@@ -159,10 +167,13 @@ export class AccessService {
         };
     }
 
-    async signOut(session: any) {
+    async signOut(session: any, res: Response) {
         const delSession = await this._sessionRepo.deleteSessionById(
             session.id
         );
+
+        res.clearCookie("refreshToken");
+
         console.log(delSession);
         if (delSession) {
             return true;
@@ -177,7 +188,7 @@ export class AccessService {
         clientAgent: any,
         clientIp: any
     ) {
-        const { user_id, email, role_id } = user;
+        const { userId, email, roleId } = user;
         if (session.refreshToken !== refreshToken) {
             throw new Error("Invalid refresh token!");
         }
@@ -186,8 +197,8 @@ export class AccessService {
 
         if (!userExists) throw new Error("User not registered");
         const tokens = await this.createTokenPair(
-            user_id,
-            role_id,
+            userId,
+            roleId,
             email,
             session.publicKey,
             session.privateKey
@@ -198,16 +209,6 @@ export class AccessService {
             clientAgent: clientAgent,
             clientIp: clientIp,
         });
-
-        // await this._prisma.session.update({
-        //     where: {
-        //         id: sessionExists?.id,
-        //     },
-        //     data: {
-        //         expiredAt: 604800,
-        //         refreshToken: tokens.refreshToken,
-        //     },
-        // });
 
         await this._sessionRepo.updateSession({
             sessionId: sessionExists?.id,

@@ -27,7 +27,8 @@ class AccessController {
             metadata: await accessService.signIn(
                 req.body,
                 req.ip,
-                req.headers["user-agent"]
+                req.headers["user-agent"],
+                res
             ),
         }).send(res);
     };
@@ -35,7 +36,7 @@ class AccessController {
     signOut = async (req: Request, res: Response, next: NextFunction) => {
         new SuccessResponse({
             message: "Sign out successfully",
-            metadata: await accessService.signOut(req.session),
+            metadata: await accessService.signOut(req.session, res),
         }).send(res);
     };
 
