@@ -32,12 +32,29 @@ class AccessController {
         }).send(res);
     };
 
-    // signOut = async (req: Request, res: Response, next: NextFunction) => {
-    //     new SuccessResponse({
-    //         message: "Sign out successfully",
-    //         metadata: await new AccessService().signOut(req.session),
-    //     }).send(res);
-    // };
+    signOut = async (req: Request, res: Response, next: NextFunction) => {
+        new SuccessResponse({
+            message: "Sign out successfully",
+            metadata: await accessService.signOut(req.session),
+        }).send(res);
+    };
+
+    refreshTokenUser = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+        new SuccessResponse({
+            message: "Sign out successfully",
+            metadata: await accessService.refreshTokenUser(
+                req.user,
+                req.refreshToken as string,
+                req.session,
+                req.headers["user-agent"],
+                req.ip
+            ),
+        }).send(res);
+    };
 }
 
 export default new AccessController();

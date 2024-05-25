@@ -170,15 +170,15 @@ export class AccessService {
         return false;
     }
 
-    async refreshToken(
+    async refreshTokenUser(
         user: any,
-        refresh_token: string,
+        refreshToken: string,
         session: any,
         clientAgent: any,
         clientIp: any
     ) {
         const { user_id, email, role_id } = user;
-        if (session.refresh_token !== refresh_token) {
+        if (session.refreshToken !== refreshToken) {
             throw new Error("Invalid refresh token!");
         }
 
