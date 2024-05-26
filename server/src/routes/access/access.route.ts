@@ -24,4 +24,6 @@ router.post(
     asyncHandler(accessController.refreshTokenUser)
 );
 
+router.get("/me", asyncHandler(accessController.getUserByAt));
+
 export default router;

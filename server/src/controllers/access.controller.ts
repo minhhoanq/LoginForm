@@ -56,6 +56,18 @@ class AccessController {
             ),
         }).send(res);
     };
+
+    getUserByAt = async (req: Request, res: Response, next: NextFunction) => {
+        new SuccessResponse({
+            message: "Get me successfully",
+            metadata: await accessService.getUserByAt(
+                req.headers["authorization"] as string,
+                req.headers["x-client-email"] as string,
+                req.headers["user-agent"] as string,
+                req.ip as string
+            ),
+        }).send(res);
+    };
 }
 
 export default new AccessController();

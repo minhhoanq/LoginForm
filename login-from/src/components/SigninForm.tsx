@@ -1,38 +1,50 @@
 import {
-    Box,
     Button,
     FormControl,
     FormHelperText,
     Input,
     InputLabel,
     Stack,
-    TextField,
     Typography,
     colors,
 } from "@mui/material";
-import { ScreenMode } from "../pages/SigninPage";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import logo from "../assets/logo/logo-google.png";
+import useAuth from "../hooks/useAuth";
+import Loader from "./Loader";
 
 type Inputs = {
     email: string;
     password: string;
 };
 
-const SigninFrom = ({ onSwitchMode }: { onSwitchMode: any }) => {
+const SigninFrom = () => {
     const navigate = useNavigate();
+    const { handleSignin } = useAuth();
 
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm<Inputs>();
 
-    const onSubmit: SubmitHandler<Inputs> = (data) => {
-        console.log(data);
-        navigate("/");
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+        await handleSignin(data)
+            .then((res) => {
+                console.log(res);
+                if (res) {
+                    const status: number = res.status;
+                    if (status === 200) {
+                        navigate("/");
+                    } else {
+                        throw new Error("");
+                    }
+                } else {
+                    throw new Error("");
+                }
+            })
+            .catch((error) => console.log(error));
     };
 
     return (
@@ -46,11 +58,12 @@ const SigninFrom = ({ onSwitchMode }: { onSwitchMode: any }) => {
                 color: colors.grey[800],
             }}
         >
+            <Loader />
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Stack
                     spacing={5}
                     sx={{
-                        width: "500px",
+                        width: "400px",
                     }}
                 >
                     <Stack>

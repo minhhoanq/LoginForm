@@ -4,16 +4,13 @@ import {
     FormHelperText,
     Input,
     InputLabel,
-    MenuItem,
-    Select,
     Stack,
-    TextField,
     Typography,
     colors,
 } from "@mui/material";
-import { ScreenMode } from "../pages/SigninPage";
-import { Link, NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
+import useAuth from "../hooks/useAuth";
 
 type Inputs = {
     email: string;
@@ -23,16 +20,32 @@ type Inputs = {
     confirmPassword: string;
 };
 
-const SignupFrom = ({ onSwitchMode }: { onSwitchMode: any }) => {
+const SignupFrom = () => {
+    const { handleSignup } = useAuth();
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm<Inputs>();
 
-    const onSubmit: SubmitHandler<Inputs> = (data) => {
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
         console.log(data);
+        await handleSignup(data)
+            .then((res) => {
+                console.log(res);
+                if (res) {
+                    const status: number = res.status;
+                    if (status === 201) {
+                        navigate("/");
+                    } else {
+                        throw new Error("");
+                    }
+                } else {
+                    throw new Error("");
+                }
+            })
+            .catch((error) => console.log(error));
     };
 
     return (
@@ -50,7 +63,7 @@ const SignupFrom = ({ onSwitchMode }: { onSwitchMode: any }) => {
                 <Stack
                     spacing={5}
                     sx={{
-                        width: "500px",
+                        width: "400px",
                     }}
                 >
                     <Stack>

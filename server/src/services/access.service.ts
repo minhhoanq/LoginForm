@@ -5,6 +5,15 @@ import JWT from "jsonwebtoken";
 import { IAccessRepository } from "../interfaces/access.interface";
 import { ISessionRepository } from "../interfaces/session.interface";
 import { Response, response } from "express";
+import {
+    AuthFailureError,
+    BadRequestError,
+    ConflictRequestError,
+    NotFoundError,
+    Unauthorized,
+} from "../core/error.response";
+import { AccessTokenData } from "../auth/checkAuth";
+import Jwt from "jsonwebtoken";
 
 export class AccessService {
     private _accessRepo: IAccessRepository;
@@ -52,7 +61,7 @@ export class AccessService {
         const { email, password, firstName, lastName } = data;
         const userExists = await this._accessRepo.findUserByEmail(email);
         if (userExists) {
-            throw new Error("User already exists");
+            throw new ConflictRequestError("User already exists");
         }
         const hashedPassword = await this.hasdData(password);
         const newUser = await this._accessRepo.createUser({
@@ -85,7 +94,7 @@ export class AccessService {
             });
 
             if (!session) {
-                throw new Error("Unable to create session");
+                throw new Unauthorized("Unable to create session");
             }
 
             return {
@@ -104,13 +113,13 @@ export class AccessService {
         const userExists = await this._accessRepo.findUserByEmail(user.email);
 
         if (!userExists) {
-            throw new Error("User already exists");
+            throw new Unauthorized("User not found");
         }
         const match = await this.validateData(
             user.password,
             userExists.password
         );
-        if (!match) throw new Error("Invalid password!");
+        if (!match) throw new Unauthorized("Invalid password!");
 
         const publicKey = crypto.randomBytes(64).toString("hex");
         const privateKey = crypto.randomBytes(64).toString("hex");
@@ -149,21 +158,25 @@ export class AccessService {
             });
         }
 
-        if (!session) throw new Error("Error: session");
+        if (!session) throw new Unauthorized("Error: session");
 
-        res.cookie("refreshToken", tokens.refreshToken, {
-            httpOnly: true,
-            secure: false,
-            path: "/",
-            sameSite: "strict",
-        });
+        // res.cookie("refreshToken", tokens.refreshToken, {
+        //     httpOnly: true,
+        //     secure: false,
+        //     path: "/",
+        //     sameSite: "strict",
+        // }).redirect("/api/v1/");
 
         return {
             user: {
                 id: userExists.id,
                 email: userExists.email,
+                firstName: userExists.firstName,
+                lastName: userExists.lastName,
             },
-            tokens,
+            tokens: {
+                accessToken: tokens.accessToken,
+            },
         };
     }
 
@@ -174,7 +187,6 @@ export class AccessService {
 
         res.clearCookie("refreshToken");
 
-        console.log(delSession);
         if (delSession) {
             return true;
         }
@@ -190,12 +202,12 @@ export class AccessService {
     ) {
         const { userId, email, roleId } = user;
         if (session.refreshToken !== refreshToken) {
-            throw new Error("Invalid refresh token!");
+            throw new Unauthorized("Invalid refresh token!");
         }
 
         const userExists = await this._accessRepo.findUserByEmail(email);
 
-        if (!userExists) throw new Error("User not registered");
+        if (!userExists) throw new Unauthorized("User not registered");
         const tokens = await this.createTokenPair(
             userId,
             roleId,
@@ -237,5 +249,44 @@ export class AccessService {
             clientAgent: clientAgent,
             clientIp: clientIp,
         });
+    }
+
+    async getUserByAt(
+        accessToken: string,
+        userEmail: string,
+        clientAgent: string,
+        clientIp: string
+    ) {
+        // console.log(accessToken + userEmail + clientAgent + clientIp);
+        if (!userEmail) throw new AuthFailureError(`Invalid client`);
+
+        const payload = {
+            email: userEmail,
+            clientAgent: clientAgent,
+            clientIp: clientIp,
+        };
+
+        const session = await this._sessionRepo.findFirstSession(payload);
+
+        if (!accessToken) {
+            throw new Unauthorized("Access token not found");
+        }
+        const decodeUser = await (<AccessTokenData>(
+            Jwt.verify(accessToken as string, session.publicKey)
+        ));
+
+        if (userEmail !== decodeUser.email)
+            throw new Unauthorized("User email not found");
+
+        const user = await this._accessRepo.findUserByEmail(userEmail);
+
+        return {
+            user: {
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+            },
+        };
     }
 }

@@ -54,10 +54,20 @@ class NotFoundError extends ErrorResponse {
     }
 }
 
+class Unauthorized extends ErrorResponse {
+    constructor(
+        message = reasonPhrases["UNAUTHORIZED"],
+        status = statusCode["UNAUTHORIZED"]
+    ) {
+        super(message, status);
+    }
+}
+
 export {
     ConflictRequestError,
     BadRequestError,
     AuthFailureError,
     ForbiddenError,
     NotFoundError,
+    Unauthorized,
 };

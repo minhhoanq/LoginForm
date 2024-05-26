@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { asyncHandler } from "../helpers/asyncHandler";
-import { AuthFailureError } from "../core/error.response";
+import { AuthFailureError, Unauthorized } from "../core/error.response";
 import { ISessionRepository } from "../interfaces/session.interface";
 import Jwt from "jsonwebtoken";
 
@@ -36,8 +36,7 @@ export class auth {
             const clientAgent = req.headers["user-agent"];
             const clientIp = req.ip;
 
-            if (!userEmail)
-                return res.json(new AuthFailureError(`Invalid client`));
+            if (!userEmail) throw new AuthFailureError(`Invalid client`);
 
             const payload = {
                 email: userEmail,
@@ -55,20 +54,20 @@ export class auth {
                     ));
 
                     if (userEmail !== decodeUser.email) {
-                        return res.json(new Error("Invalid user email"));
+                        throw new Unauthorized("Invalid user email");
                     }
                     req.session = session;
                     req.user = decodeUser;
                     req.refreshToken = refreshToken as string;
                     return next();
                 } catch (error) {
-                    return res.json(new Error("error"));
+                    throw new Error("error");
                 }
             }
 
             const accessToken = req.headers[HEADER.AUTHORIZATION] as string;
             if (!accessToken) {
-                return res.json(new Error("Access token not found"));
+                throw new Unauthorized("Access token not found");
             }
             try {
                 const decodeUser = await (<AccessTokenData>(
@@ -76,13 +75,13 @@ export class auth {
                 ));
 
                 if (userEmail !== decodeUser.email)
-                    return res.json(new Error("User email not found"));
+                    throw new Unauthorized("User email not found");
                 req.session = session;
                 req.user = decodeUser;
 
                 return next();
             } catch (error) {
-                return res.json(new Error("error"));
+                throw new Error("error");
             }
         }
     );
