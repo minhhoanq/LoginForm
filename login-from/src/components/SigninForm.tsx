@@ -184,7 +184,7 @@ const SigninFrom = () => {
                                         )}
                                     </FormControl>
                                 </Stack>
-                                <Stack justifyContent={"flex-end"}>
+                                {/* <Stack justifyContent={"flex-end"}>
                                     <Typography
                                         fontSize={"0.9rem"}
                                         sx={{
@@ -196,7 +196,7 @@ const SigninFrom = () => {
                                             Forgot password
                                         </NavLink>
                                     </Typography>
-                                </Stack>
+                                </Stack> */}
                             </Stack>
                         </Stack>
                         <Button
@@ -214,7 +214,7 @@ const SigninFrom = () => {
                         </Button>
                     </Stack>
 
-                    <Stack
+                    {/* <Stack
                         direction={"row"}
                         justifyContent={"center"}
                         alignItems={"center"}
@@ -230,7 +230,7 @@ const SigninFrom = () => {
                             }}
                         />
                         <Typography>Log in with Google</Typography>
-                    </Stack>
+                    </Stack> */}
 
                     <Stack
                         direction={"row"}
