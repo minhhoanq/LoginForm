@@ -15,7 +15,6 @@ function Home() {
 
     const { handleGetMe } = useAuth();
 
-    console.log(userLocalstorage);
     useEffect(() => {
         if (userLocalstorage === null) {
             navigate("/sign-in");
@@ -28,25 +27,37 @@ function Home() {
     }, []);
 
     return (
-        <Box
+        <Stack
+            justifyContent={"center"}
+            alignItems={"center"}
             sx={{
                 padding: 4,
+                height: "100vh",
             }}
         >
             <Stack
                 spacing={4}
                 direction={"column"}
                 justifyContent={"space-between"}
+                alignItems={"center"}
                 sx={{
                     height: "200px",
                 }}
             >
                 <Typography fontSize={32}>
-                    Hi, welcome {user.firstName} {user.lastName}
+                    Hi, welcome {user.firstName} {user.lastName}, Thanks for
+                    watching my test
                 </Typography>
-                <SignoutForm />
+                <Stack
+                    justifyContent={"center"}
+                    sx={{
+                        width: "200px",
+                    }}
+                >
+                    <SignoutForm />
+                </Stack>
             </Stack>
-        </Box>
+        </Stack>
     );
 }
 

@@ -1,3 +1,4 @@
+import { handleError } from "../helpers/handleError";
 import request from "../utils/request";
 
 export interface userSigninParams {
@@ -16,17 +17,20 @@ export const signin = async (data: userSigninParams) => {
     return await request
         .post("/user/sign-in", data)
         .then((res) => {
-            localStorage.setItem(
-                "token",
-                JSON.stringify({
-                    at: res.data.metadata.tokens.accessToken,
-                    email: res.data.metadata.user.email,
-                })
-            );
+            const response = JSON.parse(res.request.response);
+            if (response.status !== 200) {
+                return response;
+            }
+
+            const tokenObj = {
+                at: res.data.metadata.tokens.accessToken,
+                email: res.data.metadata.user.email,
+            };
+            localStorage.setItem("token", JSON.stringify(tokenObj));
             return res.data;
         })
         .catch((error) => {
-            throw error;
+            handleError(error);
         });
 };
 

@@ -57,7 +57,6 @@ export class AccessService {
     }
 
     async signUp(data: Register, clientIp: any, clientAgent: any) {
-        console.log(data);
         const { email, password, firstName, lastName } = data;
         const userExists = await this._accessRepo.findUserByEmail(email);
         if (userExists) {
@@ -166,6 +165,7 @@ export class AccessService {
         //     path: "/",
         //     sameSite: "strict",
         // }).redirect("/api/v1/");
+        // res.redirect("http://localhost:3000");
 
         return {
             user: {
@@ -257,7 +257,6 @@ export class AccessService {
         clientAgent: string,
         clientIp: string
     ) {
-        // console.log(accessToken + userEmail + clientAgent + clientIp);
         if (!userEmail) throw new AuthFailureError(`Invalid client`);
 
         const payload = {

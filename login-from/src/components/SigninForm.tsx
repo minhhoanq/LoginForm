@@ -13,6 +13,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import logo from "../assets/logo/logo-google.png";
 import useAuth from "../hooks/useAuth";
 import Loader from "./Loader";
+import { toast } from "react-toastify";
+import { useAuthProvider } from "../context/UserProvider";
+import { useEffect } from "react";
 
 type Inputs = {
     email: string;
@@ -22,6 +25,7 @@ type Inputs = {
 const SigninFrom = () => {
     const navigate = useNavigate();
     const { handleSignin } = useAuth();
+    const { setTokenAction } = useAuthProvider();
 
     const {
         register,
@@ -32,19 +36,19 @@ const SigninFrom = () => {
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         await handleSignin(data)
             .then((res) => {
-                console.log(res);
-                if (res) {
-                    const status: number = res.status;
-                    if (status === 200) {
-                        navigate("/");
-                    } else {
-                        throw new Error("");
-                    }
+                const status: number = res.status;
+
+                if (status === 200) {
+                    toast.success("Sign in success");
+                    const tokenObj = localStorage.getItem("token");
+                    setTokenAction(tokenObj);
+
+                    navigate("/");
                 } else {
-                    throw new Error("");
+                    toast.error(res.message);
                 }
             })
-            .catch((error) => console.log(error));
+            .catch((error) => toast.error("error: " + error));
     };
 
     return (
@@ -107,6 +111,10 @@ const SigninFrom = () => {
                                             aria-describedby="my-helper-text"
                                             {...register("email", {
                                                 required: "Email is require!",
+                                                pattern: {
+                                                    value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+                                                    message: "Regex email",
+                                                },
                                             })}
                                         />
                                         {errors.email ? (
@@ -152,6 +160,11 @@ const SigninFrom = () => {
                                             {...register("password", {
                                                 required:
                                                     "Password is require!",
+                                                minLength: {
+                                                    value: 3,
+                                                    message:
+                                                        "Too Many Characters",
+                                                },
                                             })}
                                         />
                                         {errors.password ? (
@@ -165,7 +178,8 @@ const SigninFrom = () => {
                                             </Typography>
                                         ) : (
                                             <FormHelperText id="my-helper-text">
-                                                We'll never share your password.
+                                                Password must be at least 3
+                                                characters long
                                             </FormHelperText>
                                         )}
                                     </FormControl>

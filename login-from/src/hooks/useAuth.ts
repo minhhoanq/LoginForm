@@ -16,7 +16,11 @@ const useAuth = (): UseAuth => {
     const handleSignin = async (data: userSigninParams) => {
         try {
             const res = await signin(data);
+            if (res.status !== 200) {
+                return res;
+            }
             dispatch(Signin(res.metadata.user));
+
             return res;
         } catch (error) {
             console.log("error: " + error);
@@ -26,7 +30,7 @@ const useAuth = (): UseAuth => {
     const handleSignup = async (data: userSignupParams) => {
         try {
             const res = await signup(data);
-            dispatch(Signup(res.metadata.user));
+            dispatch(Signup(res?.metadata.user));
             return res;
         } catch (error) {
             console.log("error: " + error);

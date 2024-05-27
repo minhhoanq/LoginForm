@@ -15,8 +15,9 @@ function SignoutForm() {
 
     return (
         <Stack
+            justifyContent={"center"}
             sx={{
-                width: "200px",
+                width: "100%",
             }}
         >
             <Button variant="contained" onClick={onSubmit}>

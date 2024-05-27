@@ -26,14 +26,13 @@ const SignupFrom = () => {
     const {
         register,
         handleSubmit,
+        getValues,
         formState: { errors },
     } = useForm<Inputs>();
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        console.log(data);
         await handleSignup(data)
             .then((res) => {
-                console.log(res);
                 if (res) {
                     const status: number = res.status;
                     if (status === 201) {
@@ -111,6 +110,15 @@ const SignupFrom = () => {
                                             {...register("firstName", {
                                                 required:
                                                     "First name is require!",
+                                                min: {
+                                                    value: 2,
+                                                    message:
+                                                        "Minimum 2 characters",
+                                                },
+                                                pattern: {
+                                                    value: /([a-zA-Z0-9_\s]+)/g,
+                                                    message: "Error message",
+                                                },
                                             })}
                                         />
                                         {errors.firstName ? (
@@ -152,6 +160,15 @@ const SignupFrom = () => {
                                             {...register("lastName", {
                                                 required:
                                                     "Last name is require!",
+                                                min: {
+                                                    value: 2,
+                                                    message:
+                                                        "Minimum 2 characters",
+                                                },
+                                                pattern: {
+                                                    value: /([a-zA-Z0-9_\s]+)/g,
+                                                    message: "Error message",
+                                                },
                                             })}
                                         />
                                         {errors.lastName ? (
@@ -192,6 +209,10 @@ const SignupFrom = () => {
                                         aria-describedby="my-helper-text"
                                         {...register("email", {
                                             required: "Email is require!",
+                                            pattern: {
+                                                value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+                                                message: "Regex email",
+                                            },
                                         })}
                                     />
                                     {errors.email ? (
@@ -232,6 +253,10 @@ const SignupFrom = () => {
                                         aria-describedby="my-helper-text"
                                         {...register("password", {
                                             required: "Password is require!",
+                                            minLength: {
+                                                value: 3,
+                                                message: "Too Many Characters",
+                                            },
                                         })}
                                     />
                                     {errors.password ? (
@@ -273,8 +298,14 @@ const SignupFrom = () => {
                                         type="password"
                                         aria-describedby="my-helper-text"
                                         {...register("confirmPassword", {
-                                            required:
-                                                "Confirm password is require!",
+                                            validate: (match) => {
+                                                const password =
+                                                    getValues("password");
+                                                return (
+                                                    match === password ||
+                                                    "Passwords should match!"
+                                                );
+                                            },
                                         })}
                                     />
                                     {errors.confirmPassword ? (

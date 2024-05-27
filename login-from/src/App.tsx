@@ -2,10 +2,12 @@ import { CssBaseline, GlobalStyles } from "@mui/material";
 import SigninPage from "./pages/SigninPage";
 import SignupPage from "./pages/SignupPage";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-// import { publicRoutes } from "./configs/routes";
-// import MainLayout from "./components/layout/defaultLayout/MainLayout";
-// import { Fragment } from "react/jsx-runtime";
 import Home from "./pages/Home";
+import { AuthProvider, useAuth } from "./utils/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { UserProvider } from "./context/UserProvider";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
     const globalStyles = {
@@ -15,18 +17,29 @@ function App() {
         },
     };
     return (
-        <Router>
-            <div className="App">
-                <CssBaseline />
-                <GlobalStyles styles={globalStyles} />
-
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/sign-in" element={<SigninPage />} />
-                    <Route path="/sign-up" element={<SignupPage />} />
-                </Routes>
-            </div>
-        </Router>
+        <div>
+            <UserProvider>
+                <Router>
+                    <div className="App">
+                        <CssBaseline />
+                        <GlobalStyles styles={globalStyles} />
+                        <Routes>
+                            <Route
+                                path={"/"}
+                                element={
+                                    <ProtectedRoute>
+                                        <Home />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route path="/sign-in" element={<SigninPage />} />
+                            <Route path="/sign-up" element={<SignupPage />} />
+                        </Routes>
+                    </div>
+                </Router>
+            </UserProvider>
+            <ToastContainer />
+        </div>
     );
 }
 
