@@ -31,7 +31,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 };
 
 // Hook để sử dụng AuthContext
-export const useAuth = (): AuthContextType => {
+export const useAuthProvider = (): AuthContextType => {
     const context = useContext(AuthContext);
     if (!context) {
         throw new Error("useAuth must be used within an AuthProvider");

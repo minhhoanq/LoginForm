@@ -1,10 +1,24 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import routes from "./routes";
 import cors from "cors";
-import cookieParser from "cookie-parser";
+// import cookieParser from "cookie-parser";
+import passport from "passport";
+const passportSetup = require("./utils/passport");
+import cookieSession from "cookie-session";
 
 const app = express();
-app.use(cookieParser());
+// app.use(cookieParser());
+
+app.use(
+    cookieSession({
+        name: "session",
+        keys: ["lama"],
+        maxAge: 24 * 60 * 60 * 100,
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(
     cors({

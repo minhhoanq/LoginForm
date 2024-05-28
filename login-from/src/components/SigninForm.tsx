@@ -8,14 +8,18 @@ import {
     Typography,
     colors,
 } from "@mui/material";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import logo from "../assets/logo/logo-google.png";
 import useAuth from "../hooks/useAuth";
 import Loader from "./Loader";
 import { toast } from "react-toastify";
 import { useAuthProvider } from "../context/UserProvider";
-import { useEffect } from "react";
+import { google } from "../api/authApi";
+// import { useEffect } from "react";
+// import { getGoogleOAuthUrl } from "../utils/getGoogleOAuthUrl";
+// import { GoogleLogin } from "@react-oauth/google";
+// import { google } from "../api/authApi";
 
 type Inputs = {
     email: string;
@@ -32,6 +36,10 @@ const SigninFrom = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<Inputs>();
+
+    const hanleGoogleSignin = async () => {
+        window.open("http://localhost:8000/api/v1/auth/google", "_self");
+    };
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         await handleSignin(data)
@@ -214,13 +222,14 @@ const SigninFrom = () => {
                         </Button>
                     </Stack>
 
-                    {/* <Stack
+                    <Stack
                         direction={"row"}
                         justifyContent={"center"}
                         alignItems={"center"}
                         sx={{
                             cursor: "pointer",
                         }}
+                        onClick={hanleGoogleSignin}
                     >
                         <img
                             src={logo}
@@ -230,7 +239,7 @@ const SigninFrom = () => {
                             }}
                         />
                         <Typography>Log in with Google</Typography>
-                    </Stack> */}
+                    </Stack>
 
                     <Stack
                         direction={"row"}

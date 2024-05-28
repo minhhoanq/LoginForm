@@ -8,9 +8,7 @@ import {
     Typography,
     colors,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
-import useAuth from "../hooks/useAuth";
 import { useState } from "react";
 import SubmitCodeModal from "./submitCodeModal";
 import { signup } from "../api/authApi";
@@ -24,9 +22,7 @@ type Inputs = {
 };
 
 const SignupFrom = () => {
-    // const { han } = useAuth();
     const [open, setOpen] = useState(false);
-    const navigate = useNavigate();
     const {
         register,
         handleSubmit,

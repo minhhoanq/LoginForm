@@ -1,8 +1,4 @@
-import {
-    userSigninParams,
-    userSignupParams,
-    verifyCode,
-} from "../../api/authApi";
+import { userSigninParams, verifyCode } from "../../api/authApi";
 
 export type UseAuth = {
     handleSignin: (data: userSigninParams) => Promise<any>;

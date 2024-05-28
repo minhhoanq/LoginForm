@@ -4,7 +4,7 @@ import crypto from "crypto";
 import JWT from "jsonwebtoken";
 import { IAccessRepository } from "../interfaces/access.interface";
 import { ISessionRepository } from "../interfaces/session.interface";
-import { Response, response } from "express";
+import { Response } from "express";
 import {
     AuthFailureError,
     ConflictRequestError,
@@ -206,14 +206,6 @@ export class AccessService {
         }
 
         if (!session) throw new Unauthorized("Error: session");
-
-        // res.cookie("refreshToken", tokens.refreshToken, {
-        //     httpOnly: true,
-        //     secure: false,
-        //     path: "/",
-        //     sameSite: "strict",
-        // }).redirect("/api/v1/");
-        // res.redirect("http://localhost:3000");
 
         return {
             user: {

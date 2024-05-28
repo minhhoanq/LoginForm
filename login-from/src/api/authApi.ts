@@ -17,9 +17,28 @@ export interface verifyCode {
     code: string;
 }
 
+// Google
+export const google = async () => {
+    return await request
+        .get("/auth/google/sign-in/success", {
+            withCredentials: true,
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Credentials": true,
+            }, // Nếu cần gửi cookie cùng với yêu cầu
+        })
+        .then((res) => {
+            if (res.status === 200) {
+                console.log(res);
+                return res.data;
+            }
+        });
+};
+
 export const signin = async (data: userSigninParams) => {
     return await request
-        .post("/user/sign-in", data)
+        .post("/auth/sign-in", data)
         .then((res) => {
             const response = JSON.parse(res.request.response);
             if (response.status !== 200) {
@@ -40,7 +59,7 @@ export const signin = async (data: userSigninParams) => {
 
 export const signup = async (data: userSignupParams) => {
     return await request
-        .post("/user/sign-up", data)
+        .post("/auth/sign-up", data)
         .then((res) => res.data)
         .catch((error) => {
             throw error;
@@ -49,7 +68,7 @@ export const signup = async (data: userSignupParams) => {
 
 export const finalSignup = async (data: verifyCode) => {
     return await request
-        .post("user/final-sign-up", data)
+        .post("auth/final-sign-up", data)
         .then((res) => {
             const response = JSON.parse(res.request.response);
             if (response.status !== 201) {
@@ -70,7 +89,7 @@ export const finalSignup = async (data: verifyCode) => {
 
 export const signout = async () => {
     return await request
-        .post("/user/sign-out")
+        .post("/auth/sign-out")
         .then(() => localStorage.removeItem("token"))
         .catch((error) => {
             throw error;
@@ -79,7 +98,7 @@ export const signout = async () => {
 
 export const getMe = async () => {
     return await request
-        .get("/user/me")
+        .get("/auth/me")
         .then((res) => res.data)
         .catch((error) => {
             throw error;
