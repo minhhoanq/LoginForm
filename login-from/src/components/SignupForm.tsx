@@ -11,6 +11,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
+import { useState } from "react";
+import SubmitCodeModal from "./submitCodeModal";
+import { signup } from "../api/authApi";
 
 type Inputs = {
     email: string;
@@ -21,7 +24,8 @@ type Inputs = {
 };
 
 const SignupFrom = () => {
-    const { handleSignup } = useAuth();
+    // const { han } = useAuth();
+    const [open, setOpen] = useState(false);
     const navigate = useNavigate();
     const {
         register,
@@ -31,12 +35,12 @@ const SignupFrom = () => {
     } = useForm<Inputs>();
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        await handleSignup(data)
+        await signup(data)
             .then((res) => {
                 if (res) {
                     const status: number = res.status;
                     if (status === 201) {
-                        navigate("/");
+                        setOpen(true);
                     } else {
                         throw new Error("");
                     }
@@ -58,6 +62,7 @@ const SignupFrom = () => {
                 color: colors.grey[800],
             }}
         >
+            <SubmitCodeModal open={open} setOpen={setOpen} />
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Stack
                     spacing={5}

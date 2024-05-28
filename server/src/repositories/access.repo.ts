@@ -39,4 +39,34 @@ export class AccessRepository implements IAccessRepository {
             },
         });
     }
+
+    async deleteUserByEmail(email: string): Promise<any> {
+        return await this._prisma.user.findFirst({
+            where: {
+                email: email,
+            },
+        });
+    }
+
+    async findUserByCodeVerify(code: string): Promise<any> {
+        console.log("codeRepo:" + code);
+        return await this._prisma.user.findFirst({
+            where: {
+                email: {
+                    endsWith: `${code}`,
+                },
+            },
+        });
+    }
+
+    async updateUserEmail(email: string, id: number): Promise<any> {
+        return await this._prisma.user.update({
+            where: {
+                id: id,
+            },
+            data: {
+                email: email,
+            },
+        });
+    }
 }

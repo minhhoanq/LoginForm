@@ -27,3 +27,8 @@ export class Login {
     @IsString()
     password: string;
 }
+
+export class CodeVerify {
+    @IsNotEmpty()
+    code: string;
+}

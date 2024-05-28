@@ -13,6 +13,10 @@ export interface userSignupParams {
     password: string;
 }
 
+export interface verifyCode {
+    code: string;
+}
+
 export const signin = async (data: userSigninParams) => {
     return await request
         .post("/user/sign-in", data)
@@ -38,6 +42,27 @@ export const signup = async (data: userSignupParams) => {
     return await request
         .post("/user/sign-up", data)
         .then((res) => res.data)
+        .catch((error) => {
+            throw error;
+        });
+};
+
+export const finalSignup = async (data: verifyCode) => {
+    return await request
+        .post("user/final-sign-up", data)
+        .then((res) => {
+            const response = JSON.parse(res.request.response);
+            if (response.status !== 201) {
+                return response;
+            }
+
+            const tokenObj = {
+                at: res.data.metadata.tokens.accessToken,
+                email: res.data.metadata.user.email,
+            };
+            localStorage.setItem("token", JSON.stringify(tokenObj));
+            return res.data;
+        })
         .catch((error) => {
             throw error;
         });

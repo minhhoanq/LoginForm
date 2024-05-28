@@ -10,6 +10,7 @@ const authen = new auth(new SessionRepository());
 const router = express.Router();
 
 router.post("/sign-up", asyncHandler(accessController.signUp));
+router.post("/final-sign-up", asyncHandler(accessController.finalSignup));
 router.post("/sign-in", asyncHandler(accessController.signIn));
 
 router.post(

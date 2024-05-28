@@ -1,14 +1,16 @@
 import { useDispatch } from "react-redux";
 import {
+    finalSignup,
     getMe,
     signin,
     signout,
     signup,
     userSigninParams,
     userSignupParams,
+    verifyCode,
 } from "../api/authApi";
 import { UseAuth } from "./types/useAuthTypes";
-import { GetMe, Signin, Signout, Signup } from "../redux/auth";
+import { GetMe, Signin, Signout, FindlaSignup } from "../redux/auth";
 
 const useAuth = (): UseAuth => {
     const dispatch = useDispatch();
@@ -27,10 +29,10 @@ const useAuth = (): UseAuth => {
         }
     };
 
-    const handleSignup = async (data: userSignupParams) => {
+    const handleFinalSignup = async (data: verifyCode) => {
         try {
-            const res = await signup(data);
-            dispatch(Signup(res?.metadata.user));
+            const res = await finalSignup(data);
+            dispatch(FindlaSignup(res?.metadata.user));
             return res;
         } catch (error) {
             console.log("error: " + error);
@@ -58,7 +60,7 @@ const useAuth = (): UseAuth => {
 
     return {
         handleSignin,
-        handleSignup,
+        handleFinalSignup,
         handleSignout,
         handleGetMe,
     };

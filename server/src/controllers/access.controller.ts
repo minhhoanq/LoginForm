@@ -13,10 +13,17 @@ class AccessController {
     signUp = async (req: Request, res: Response, next: NextFunction) => {
         new Created({
             message: "Sign up successfully",
-            metadata: await accessService.signUp(
+            metadata: await accessService.signUp(req.body),
+        }).send(res);
+    };
+
+    finalSignup = async (req: Request, res: Response, next: NextFunction) => {
+        new Created({
+            message: "Sign up successfully",
+            metadata: await accessService.finalSignup(
                 req.body,
-                req.ip,
-                req.headers["user-agent"]
+                req.headers["user-agent"],
+                req.ip
             ),
         }).send(res);
     };

@@ -1,4 +1,4 @@
-import { Login, Register } from "../dtos/user.dto";
+import { CodeVerify, Login, Register } from "../dtos/user.dto";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import JWT from "jsonwebtoken";
@@ -7,13 +7,13 @@ import { ISessionRepository } from "../interfaces/session.interface";
 import { Response, response } from "express";
 import {
     AuthFailureError,
-    BadRequestError,
     ConflictRequestError,
-    NotFoundError,
     Unauthorized,
 } from "../core/error.response";
 import { AccessTokenData } from "../auth/checkAuth";
 import Jwt from "jsonwebtoken";
+import makeVerification from "uniqid";
+import sendMail from "../utils/sendMail";
 
 export class AccessService {
     private _accessRepo: IAccessRepository;
@@ -56,53 +56,101 @@ export class AccessService {
         };
     }
 
-    async signUp(data: Register, clientIp: any, clientAgent: any) {
+    async signUp(data: Register) {
         const { email, password, firstName, lastName } = data;
         const userExists = await this._accessRepo.findUserByEmail(email);
+        console.log("cehcek");
         if (userExists) {
             throw new ConflictRequestError("User already exists");
         }
         const hashedPassword = await this.hasdData(password);
+
+        const verificationCode = makeVerification();
+
+        const emailEdited = btoa(email) + "@" + verificationCode;
+
         const newUser = await this._accessRepo.createUser({
-            email,
+            email: emailEdited,
             hashedPassword,
             firstName,
             lastName,
         });
 
         if (newUser) {
-            const publicKey = crypto.randomBytes(64).toString("hex");
-            const privateKey = crypto.randomBytes(64).toString("hex");
+            const html = `<h2>Mã xác nhận đăng ký tài khoản của bạn là:</h2> 
+                            <br/><blockquote>${verificationCode}</blockquote>
+                            <h4>Vui lòng không chia sẻ mã này cho bất kỳ ai, hoặc app, website không phải của chúng tôi!</h4>
+                            <h4>Cảm ơn và chúc bạn trải nghiệm dịch vụ vui vẻ <3</h4>`;
+            const data = {
+                email,
+                html,
+                subject: "Register with email!",
+            };
 
-            const tokens = await this.createTokenPair(
-                newUser.id,
-                newUser.roleId,
-                newUser.email,
-                publicKey,
-                privateKey
+            await sendMail(data);
+        }
+
+        // setTimeout(async () => {
+        //     await this._accessRepo.deleteUserByEmail(emailEdited);
+        // }, 15 * 1000);
+
+        return 1;
+    }
+
+    async finalSignup(verifyCode: CodeVerify, clientAgent: any, clientIp: any) {
+        const code = verifyCode.code;
+        console.log("verifyCode:" + verifyCode);
+
+        const userExist = await this._accessRepo.findUserByCodeVerify(code);
+
+        if (userExist) {
+            userExist.email = atob(userExist.email.split("@")[0]);
+            console.log(userExist.email, userExist.id);
+            const updateUser = await this._accessRepo.updateUserEmail(
+                userExist.email,
+                userExist.id
             );
 
-            const session = await this._sessionRepo.createSession({
-                email: newUser.email,
-                publicKey: publicKey,
-                privateKey: privateKey,
-                clientAgent: clientAgent,
-                clientIp: clientIp,
-                expiredAt: 604800,
-                refreshToken: tokens.refreshToken,
-            });
+            if (updateUser) {
+                const publicKey = crypto.randomBytes(64).toString("hex");
+                const privateKey = crypto.randomBytes(64).toString("hex");
 
-            if (!session) {
-                throw new Unauthorized("Unable to create session");
+                const tokens = await this.createTokenPair(
+                    updateUser.id,
+                    updateUser.roleId,
+                    updateUser.email,
+                    publicKey,
+                    privateKey
+                );
+
+                const session = await this._sessionRepo.createSession({
+                    email: updateUser.email,
+                    publicKey: publicKey,
+                    privateKey: privateKey,
+                    clientAgent: clientAgent,
+                    clientIp: clientIp,
+                    expiredAt: 604800,
+                    refreshToken: tokens.refreshToken,
+                });
+
+                if (!session) {
+                    throw new Unauthorized("Unable to create session");
+                }
+
+                return {
+                    user: {
+                        id: updateUser.id,
+                        email: updateUser.email,
+                        firstName: updateUser.firstName,
+                        lastName: updateUser.lastName,
+                    },
+                    tokens: {
+                        accessToken: tokens.accessToken,
+                    },
+                };
             }
 
-            return {
-                user: {
-                    id: newUser.id,
-                    email: newUser.email,
-                },
-                tokens,
-            };
+            return updateUser;
         }
 
         return null;

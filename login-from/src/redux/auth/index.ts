@@ -27,7 +27,7 @@ const authSlice = createSlice({
         Signin: (state, action: PayloadAction<any>) => {
             state.user = action.payload;
         },
-        Signup: (state, action: PayloadAction<any>) => {
+        FindlaSignup: (state, action: PayloadAction<any>) => {
             state.user = action.payload;
         },
         Signout: (state) => {
@@ -44,5 +44,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { Signin, Signup, Signout, GetMe } = authSlice.actions;
+export const { Signin, FindlaSignup, Signout, GetMe } = authSlice.actions;
 export default authSlice.reducer;
