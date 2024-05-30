@@ -29,14 +29,32 @@ export default function SubmitCodeModal({
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<any>>;
 }) {
+    const [minutes, setMinutes] = React.useState(9);
+    const [seconds, setSeconds] = React.useState(59);
     const navigate = useNavigate();
     const { setTokenAction } = useAuthProvider();
     const {
         register,
         handleSubmit,
-        getValues,
         formState: { errors },
     } = useForm<Inputs>();
+
+    React.useEffect(() => {
+        const timer = setInterval(() => {
+            setSeconds((prev) => prev - 1);
+            console.log(minutes + ":" + seconds);
+            if (seconds === 0) {
+                setMinutes((prev) => prev - 1);
+                setSeconds(59);
+            }
+        }, 1000);
+
+        if (minutes === 0 && seconds === 0) {
+            setOpen(false);
+        }
+
+        return () => clearInterval(timer);
+    });
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         console.log(data);
@@ -135,6 +153,11 @@ export default function SubmitCodeModal({
                                     )}
                                 </FormControl>
                             </Stack>
+                            <Box>
+                                Còn lại:{" "}
+                                {minutes < 10 ? "0" + minutes : minutes}:
+                                {seconds < 10 ? "0" + seconds : seconds}
+                            </Box>
                         </Stack>
                         <Box
                             sx={{

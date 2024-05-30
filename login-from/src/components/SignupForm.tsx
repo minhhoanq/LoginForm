@@ -59,7 +59,7 @@ const SignupFrom = () => {
                 color: colors.grey[800],
             }}
         >
-            <SubmitCodeModal open={open} setOpen={setOpen} />
+            {open && <SubmitCodeModal open={open} setOpen={setOpen} />}
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Stack
                     spacing={5}
