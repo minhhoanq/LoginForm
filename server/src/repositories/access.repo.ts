@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { IAccessRepository } from "../interfaces/access.interface";
+import { Update, findFirst } from "../dtos/user.dto";
 
 export class AccessRepository implements IAccessRepository {
     _prisma: PrismaClient;
@@ -40,6 +41,35 @@ export class AccessRepository implements IAccessRepository {
         });
     }
 
+    async findUser(data: findFirst): Promise<any> {
+        const {
+            id,
+            firstName,
+            lastName,
+            email,
+            password,
+            status,
+            isVerify,
+            passwordChangedAt,
+            passwordResetToken,
+            passwordResetExpires,
+        } = data;
+        return await this._prisma.user.findFirst({
+            where: {
+                id: id,
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                password: password,
+                status: status,
+                isVerify: isVerify,
+                passwordChangedAt: passwordChangedAt,
+                passwordResetToken: passwordResetToken,
+                passwordResetExpires: passwordResetExpires,
+            },
+        });
+    }
+
     async deleteUserByEmail(email: string): Promise<any> {
         return await this._prisma.user.findFirst({
             where: {
@@ -66,6 +96,42 @@ export class AccessRepository implements IAccessRepository {
             },
             data: {
                 email: email,
+            },
+        });
+    }
+
+    async updateUser(data: Update): Promise<any> {
+        const {
+            id,
+            firstName,
+            lastName,
+            email,
+            password,
+            status,
+            isVerify,
+            passwordChangedAt,
+            passwordResetToken,
+            passwordResetExpires,
+        } = data;
+
+        console.log(
+            id + "\n" + passwordResetToken + "\n" + passwordResetExpires
+        );
+
+        return await this._prisma.user.update({
+            where: {
+                id: id,
+            },
+            data: {
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                password: password,
+                status: status,
+                isVerify: isVerify,
+                passwordChangedAt: passwordChangedAt,
+                passwordResetToken: passwordResetToken,
+                passwordResetExpires: passwordResetExpires,
             },
         });
     }

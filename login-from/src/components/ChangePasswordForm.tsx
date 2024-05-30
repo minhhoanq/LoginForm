@@ -8,55 +8,35 @@ import {
     Typography,
     colors,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
-import logo from "../assets/logo/logo-google.png";
-import useAuth from "../hooks/useAuth";
 import Loader from "./Loader";
-import { toast } from "react-toastify";
-import { useAuthProvider } from "../context/UserProvider";
-import { google } from "../api/authApi";
-// import { useEffect } from "react";
-// import { getGoogleOAuthUrl } from "../utils/getGoogleOAuthUrl";
-// import { GoogleLogin } from "@react-oauth/google";
-// import { google } from "../api/authApi";
+import { useParams } from "react-router-dom";
+import { resetPassword } from "../api/authApi";
 
 type Inputs = {
-    email: string;
     password: string;
+    confirmPassword: string;
+    tokenPassword: string;
 };
 
-const SigninFrom = () => {
-    const navigate = useNavigate();
-    const { handleSignin } = useAuth();
-    const { setTokenAction } = useAuthProvider();
+const ChangePasswordForm = () => {
+    const params = useParams();
 
     const {
         register,
         handleSubmit,
+        getValues,
+        setValue,
         formState: { errors },
-    } = useForm<Inputs>();
-
-    const hanleGoogleSignin = async () => {
-        window.open("http://localhost:8000/api/v1/auth/google", "_self");
-    };
+    } = useForm<Inputs>({
+        defaultValues: {
+            tokenPassword: params.tokenPassword as string,
+        },
+    });
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        await handleSignin(data)
-            .then((res) => {
-                const status: number = res.status;
-
-                if (status === 200) {
-                    toast.success("Sign in success");
-                    const tokenObj = localStorage.getItem("token");
-                    setTokenAction(tokenObj);
-
-                    navigate("/");
-                } else {
-                    toast.error(res.message);
-                }
-            })
-            .catch((error) => toast.error("error: " + error));
+        console.log(data);
+        await resetPassword(data);
     };
 
     return (
@@ -75,7 +55,7 @@ const SigninFrom = () => {
                 <Stack
                     spacing={5}
                     sx={{
-                        width: "400px",
+                        width: "500px",
                     }}
                 >
                     <Stack>
@@ -84,7 +64,7 @@ const SigninFrom = () => {
                             fontWeight={600}
                             color={colors.grey[800]}
                         >
-                            Welcome
+                            Regenerate your password
                         </Typography>
 
                         <Typography
@@ -97,52 +77,6 @@ const SigninFrom = () => {
                     </Stack>
                     <Stack spacing={4}>
                         <Stack spacing={2}>
-                            <Stack spacing={1}>
-                                <Stack>
-                                    <FormControl>
-                                        <InputLabel htmlFor="email">
-                                            <Stack direction={"row"}>
-                                                <Typography>Email</Typography>
-                                                <Typography
-                                                    sx={{
-                                                        marginLeft: "5px",
-                                                        color: colors.red[800],
-                                                    }}
-                                                >
-                                                    *
-                                                </Typography>
-                                            </Stack>
-                                        </InputLabel>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            aria-describedby="my-helper-text"
-                                            {...register("email", {
-                                                required: "Email is require!",
-                                                pattern: {
-                                                    value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-                                                    message: "Regex email",
-                                                },
-                                            })}
-                                        />
-                                        {errors.email ? (
-                                            <Typography
-                                                fontSize={"0.8rem"}
-                                                sx={{
-                                                    color: colors.red[600],
-                                                }}
-                                            >
-                                                {errors.email.message}
-                                            </Typography>
-                                        ) : (
-                                            <FormHelperText id="my-helper-text">
-                                                We'll never share your email.
-                                            </FormHelperText>
-                                        )}
-                                    </FormControl>
-                                </Stack>
-                            </Stack>
-
                             <Stack spacing={1}>
                                 <Stack>
                                     <FormControl>
@@ -162,8 +96,8 @@ const SigninFrom = () => {
                                             </Stack>
                                         </InputLabel>
                                         <Input
-                                            type="password"
                                             id="password"
+                                            type="password"
                                             aria-describedby="my-helper-text"
                                             {...register("password", {
                                                 required:
@@ -186,24 +120,62 @@ const SigninFrom = () => {
                                             </Typography>
                                         ) : (
                                             <FormHelperText id="my-helper-text">
-                                                Password must be at least 3
-                                                characters long
+                                                We'll never share your password.
                                             </FormHelperText>
                                         )}
                                     </FormControl>
                                 </Stack>
-                                <Stack justifyContent={"flex-end"}>
-                                    <Typography
-                                        fontSize={"0.9rem"}
-                                        sx={{
-                                            marginLeft: "auto",
-                                            color: colors.blue[600],
-                                        }}
-                                    >
-                                        <Link to={"/forgot-password"}>
-                                            Forgot password
-                                        </Link>
-                                    </Typography>
+                            </Stack>
+
+                            <Stack spacing={1}>
+                                <Stack>
+                                    <FormControl>
+                                        <InputLabel htmlFor="confirmPassword">
+                                            <Stack direction={"row"}>
+                                                <Typography>
+                                                    Confirm Password
+                                                </Typography>
+                                                <Typography
+                                                    sx={{
+                                                        marginLeft: "5px",
+                                                        color: colors.red[800],
+                                                    }}
+                                                >
+                                                    *
+                                                </Typography>
+                                            </Stack>
+                                        </InputLabel>
+                                        <Input
+                                            id="confirmPassword"
+                                            type="password"
+                                            aria-describedby="my-helper-text"
+                                            {...register("confirmPassword", {
+                                                validate: (match) => {
+                                                    const password =
+                                                        getValues("password");
+                                                    return (
+                                                        match === password ||
+                                                        "Passwords should match!"
+                                                    );
+                                                },
+                                            })}
+                                        />
+                                        {errors.confirmPassword ? (
+                                            <Typography
+                                                fontSize={"0.8rem"}
+                                                sx={{
+                                                    color: colors.red[600],
+                                                }}
+                                            >
+                                                {errors.confirmPassword.message}
+                                            </Typography>
+                                        ) : (
+                                            <FormHelperText id="my-helper-text">
+                                                We'll never share your confirm
+                                                password.
+                                            </FormHelperText>
+                                        )}
+                                    </FormControl>
                                 </Stack>
                             </Stack>
                         </Stack>
@@ -218,36 +190,33 @@ const SigninFrom = () => {
                                 },
                             }}
                         >
-                            Sign in
+                            Regenerate password
                         </Button>
                     </Stack>
 
                     <Stack
                         direction={"row"}
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                        sx={{
-                            cursor: "pointer",
-                        }}
-                        onClick={hanleGoogleSignin}
-                    >
-                        <img
-                            src={logo}
-                            alt="google"
-                            style={{
-                                width: "30px",
-                            }}
-                        />
-                        <Typography>Log in with Google</Typography>
-                    </Stack>
-
-                    <Stack
-                        direction={"row"}
                         spacing={2}
-                        justifyContent={"center"}
+                        justifyContent={"space-between"}
                         alignItems={"center"}
                     >
-                        <Typography>Don't have an account ?</Typography>
+                        <a href={`/sign-in`}>
+                            <Typography
+                                // onClick={() => onSwitchMode(ScreenMode.SIGN_UP)}
+                                fontWeight={600}
+                                sx={{
+                                    color: colors.blue[600],
+                                    cursor: "pointer",
+                                    userSelect: "none",
+                                    "&:hover": {
+                                        color: colors.blue[400],
+                                    },
+                                    fontWeight: "500",
+                                }}
+                            >
+                                Go to sign in
+                            </Typography>
+                        </a>
                         <a href={`/sign-up`}>
                             <Typography
                                 // onClick={() => onSwitchMode(ScreenMode.SIGN_UP)}
@@ -259,9 +228,10 @@ const SigninFrom = () => {
                                     "&:hover": {
                                         color: colors.blue[400],
                                     },
+                                    fontWeight: "500",
                                 }}
                             >
-                                Sign up
+                                Sign up a new account
                             </Typography>
                         </a>
                     </Stack>
@@ -271,4 +241,4 @@ const SigninFrom = () => {
     );
 };
 
-export default SigninFrom;
+export default ChangePasswordForm;

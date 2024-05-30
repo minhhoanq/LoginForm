@@ -104,3 +104,24 @@ export const getMe = async () => {
             throw error;
         });
 };
+
+export const forgotPassword = async (data: { email: string }) => {
+    return await request
+        .post("/auth/forgot-password", data)
+        .then((res) => res.data)
+        .catch((error) => {
+            throw error;
+        });
+};
+
+export const resetPassword = async (data: {
+    password: string;
+    tokenPassword: string;
+}) => {
+    return await request
+        .post("/auth/reset-password", data)
+        .then((res) => res.data)
+        .catch((error) => {
+            throw error;
+        });
+};

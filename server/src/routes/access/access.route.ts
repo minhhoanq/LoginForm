@@ -60,6 +60,9 @@ router.post(
     asyncHandler(accessController.refreshTokenUser)
 );
 
+router.post("/forgot-password", asyncHandler(accessController.forgotPassword));
+router.post("/reset-password", asyncHandler(accessController.resetPassword));
+
 router.get("/me", asyncHandler(accessController.getUserByAt));
 
 export default router;

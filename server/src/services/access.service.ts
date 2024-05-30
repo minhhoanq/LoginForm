@@ -7,6 +7,7 @@ import { ISessionRepository } from "../interfaces/session.interface";
 import { Response } from "express";
 import {
     AuthFailureError,
+    BadRequestError,
     ConflictRequestError,
     Unauthorized,
 } from "../core/error.response";
@@ -24,6 +25,20 @@ export class AccessService {
     ) {
         this._accessRepo = accessRepo;
         this._sessionRepo = sessionRepo;
+    }
+
+    createPasswordChangedToken() {
+        const resetToken = crypto.randomBytes(32).toString("hex");
+        const passwordResetToken = crypto
+            .createHash("sha256")
+            .update(resetToken)
+            .digest("hex");
+        const passwordResetExpires = Date.now() + 10 * 60 * 1000;
+        return {
+            resetToken,
+            passwordResetToken,
+            passwordResetExpires,
+        };
     }
 
     async hasdData(data: any) {
@@ -103,57 +118,55 @@ export class AccessService {
 
         const userExist = await this._accessRepo.findUserByCodeVerify(code);
 
-        if (userExist) {
-            userExist.email = atob(userExist.email.split("@")[0]);
-            console.log(userExist.email, userExist.id);
-            const updateUser = await this._accessRepo.updateUserEmail(
-                userExist.email,
-                userExist.id
-            );
+        if (!userExist) throw new AuthFailureError("Invalid data");
 
-            if (updateUser) {
-                const publicKey = crypto.randomBytes(64).toString("hex");
-                const privateKey = crypto.randomBytes(64).toString("hex");
+        userExist.email = atob(userExist.email.split("@")[0]);
 
-                const tokens = await this.createTokenPair(
-                    updateUser.id,
-                    updateUser.roleId,
-                    updateUser.email,
-                    publicKey,
-                    privateKey
-                );
+        console.log(userExist.email, userExist.id);
 
-                const session = await this._sessionRepo.createSession({
-                    email: updateUser.email,
-                    publicKey: publicKey,
-                    privateKey: privateKey,
-                    clientAgent: clientAgent,
-                    clientIp: clientIp,
-                    expiredAt: 604800,
-                    refreshToken: tokens.refreshToken,
-                });
+        const updateUser = await this._accessRepo.updateUserEmail(
+            userExist.email,
+            userExist.id
+        );
 
-                if (!session) {
-                    throw new Unauthorized("Unable to create session");
-                }
+        if (!updateUser) throw new BadRequestError("Error!");
 
-                return {
-                    user: {
-                        id: updateUser.id,
-                        email: updateUser.email,
-                        firstName: updateUser.firstName,
-                        lastName: updateUser.lastName,
-                    },
-                    tokens: {
-                        accessToken: tokens.accessToken,
-                    },
-                };
-            }
+        const publicKey = crypto.randomBytes(64).toString("hex");
+        const privateKey = crypto.randomBytes(64).toString("hex");
 
-            return updateUser;
+        const tokens = await this.createTokenPair(
+            updateUser.id,
+            updateUser.roleId,
+            updateUser.email,
+            publicKey,
+            privateKey
+        );
+
+        const session = await this._sessionRepo.createSession({
+            email: updateUser.email,
+            publicKey: publicKey,
+            privateKey: privateKey,
+            clientAgent: clientAgent,
+            clientIp: clientIp,
+            expiredAt: 604800,
+            refreshToken: tokens.refreshToken,
+        });
+
+        if (!session) {
+            throw new Unauthorized("Unable to create session");
         }
 
-        return null;
+        return {
+            user: {
+                id: updateUser.id,
+                email: updateUser.email,
+                firstName: updateUser.firstName,
+                lastName: updateUser.lastName,
+            },
+            tokens: {
+                accessToken: tokens.accessToken,
+            },
+        };
     }
 
     async signIn(user: Login, clientIp: any, clientAgent: any, res: Response) {
@@ -327,5 +340,72 @@ export class AccessService {
                 lastName: user.lastName,
             },
         };
+    }
+
+    async forgotPassword(data: { email: string }) {
+        const { email } = data;
+        console.log(email);
+        if (!email) {
+            throw new AuthFailureError("Missing email!");
+        }
+
+        const user = await this._accessRepo.findUserByEmail(email);
+
+        if (!user) throw new AuthFailureError("User not found!");
+
+        const passwordTokens = this.createPasswordChangedToken();
+
+        console.log(passwordTokens);
+
+        const update = await this._accessRepo.updateUser({
+            id: user.id,
+            passwordResetToken: passwordTokens.passwordResetToken,
+            passwordResetExpires: 604800,
+        });
+
+        const html = `Vui lòng click vào link dưới đây để thay đổi mật khẩu. Link này sẽ hết hạn sau 10 phút kể từ bây giờ. 
+        <a href=${process.env.CLIENT_URL}/reset-password/${passwordTokens.resetToken}>Nhấn vào đây</a>`;
+        const payload = {
+            email: user.email,
+            html,
+            subject: "Register with email!",
+        };
+
+        await sendMail(payload);
+
+        return update;
+    }
+
+    async resetPassword(data: { password: string; tokenPassword: string }) {
+        console.log(data);
+        const { password, tokenPassword } = data;
+        if (!password || !tokenPassword)
+            throw new BadRequestError("Missing data!");
+
+        const passwordResetToken = crypto
+            .createHash("sha256")
+            .update(tokenPassword)
+            .digest("hex");
+
+        console.log(passwordResetToken);
+
+        const user = await this._accessRepo.findUser({
+            passwordResetToken: passwordResetToken,
+        });
+
+        if (!user) throw new AuthFailureError("Invalid value");
+        console.log(user);
+
+        const hashedPassword = await this.hasdData(password);
+
+        const update = await this._accessRepo.updateUser({
+            id: user.id,
+            password: hashedPassword,
+            passwordResetToken: "",
+            passwordChangedAt: Date.now().toString(),
+            passwordResetExpires: undefined,
+        });
+
+        return update;
     }
 }

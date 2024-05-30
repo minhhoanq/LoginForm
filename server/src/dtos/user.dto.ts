@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import {
+    IsBoolean,
+    IsEmail,
+    IsNotEmpty,
+    IsNumber,
+    IsString,
+} from "class-validator";
 
 export class Register {
     @IsNotEmpty()
@@ -31,4 +37,88 @@ export class Login {
 export class CodeVerify {
     @IsNotEmpty()
     code: string;
+}
+
+export class Update {
+    @IsNotEmpty()
+    @IsNumber()
+    id: number;
+
+    @IsNotEmpty()
+    @IsString()
+    firstName?: string;
+
+    @IsNotEmpty()
+    @IsString()
+    lastName?: string;
+
+    @IsNotEmpty()
+    @IsEmail()
+    email?: string;
+
+    @IsNotEmpty()
+    @IsString()
+    password?: string;
+
+    @IsNotEmpty()
+    @IsBoolean()
+    status?: boolean;
+
+    @IsNotEmpty()
+    @IsBoolean()
+    isVerify?: boolean;
+
+    @IsNotEmpty()
+    @IsString()
+    passwordChangedAt?: string;
+
+    @IsNotEmpty()
+    @IsString()
+    passwordResetToken?: string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    passwordResetExpires?: number;
+}
+
+export class findFirst {
+    @IsNotEmpty()
+    @IsNumber()
+    id?: number;
+
+    @IsNotEmpty()
+    @IsString()
+    firstName?: string;
+
+    @IsNotEmpty()
+    @IsString()
+    lastName?: string;
+
+    @IsNotEmpty()
+    @IsEmail()
+    email?: string;
+
+    @IsNotEmpty()
+    @IsString()
+    password?: string;
+
+    @IsNotEmpty()
+    @IsBoolean()
+    status?: boolean;
+
+    @IsNotEmpty()
+    @IsBoolean()
+    isVerify?: boolean;
+
+    @IsNotEmpty()
+    @IsString()
+    passwordChangedAt?: string;
+
+    @IsNotEmpty()
+    @IsString()
+    passwordResetToken?: string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    passwordResetExpires?: number;
 }

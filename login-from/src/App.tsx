@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import useAuth from "./hooks/useAuth";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 
 function App() {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -60,6 +62,15 @@ function App() {
                             />
                             <Route path="/sign-in" element={<SigninPage />} />
                             <Route path="/sign-up" element={<SignupPage />} />
+                            <Route
+                                path="/forgot-password"
+                                element={<ForgotPasswordPage />}
+                            />
+
+                            <Route
+                                path="/reset-password/:tokenPassword"
+                                element={<ChangePasswordPage />}
+                            />
                         </Routes>
                     </div>
                 </Router>

@@ -116,7 +116,7 @@ export default function SubmitCodeModal({
                                         id="code"
                                         aria-describedby="my-helper-text"
                                         {...register("code", {
-                                            required: "First name is require!",
+                                            required: "Code is require!",
                                         })}
                                     />
                                     {errors.code ? (
@@ -154,13 +154,13 @@ export default function SubmitCodeModal({
                             >
                                 Continue
                             </Button>
-                            <Button
+                            {/* <Button
                                 variant="outlined"
                                 color="neutral"
                                 onClick={() => setOpen(false)}
                             >
                                 Cancel
-                            </Button>
+                            </Button> */}
                         </Box>
                     </form>
                 </ModalDialog>
