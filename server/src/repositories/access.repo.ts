@@ -54,6 +54,7 @@ export class AccessRepository implements IAccessRepository {
             passwordResetToken,
             passwordResetExpires,
         } = data;
+        console.log("expired: " + passwordResetExpires);
         return await this._prisma.user.findFirst({
             where: {
                 id: id,
@@ -65,13 +66,15 @@ export class AccessRepository implements IAccessRepository {
                 isVerify: isVerify,
                 passwordChangedAt: passwordChangedAt,
                 passwordResetToken: passwordResetToken,
-                passwordResetExpires: passwordResetExpires,
+                passwordResetExpires: {
+                    gt: passwordResetExpires,
+                },
             },
         });
     }
 
     async deleteUserByEmail(email: string): Promise<any> {
-        return await this._prisma.user.findFirst({
+        return await this._prisma.user.delete({
             where: {
                 email: email,
             },

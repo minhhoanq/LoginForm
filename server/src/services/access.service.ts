@@ -105,9 +105,11 @@ export class AccessService {
             await sendMail(data);
         }
 
-        // setTimeout(async () => {
-        //     await this._accessRepo.deleteUserByEmail(emailEdited);
-        // }, 15 * 1000);
+        console.log(emailEdited);
+
+        setTimeout(async () => {
+            await this._accessRepo.deleteUserByEmail(emailEdited);
+        }, 10 * 60 * 1000);
 
         return 1;
     }
@@ -118,7 +120,10 @@ export class AccessService {
 
         const userExist = await this._accessRepo.findUserByCodeVerify(code);
 
-        if (!userExist) throw new AuthFailureError("Invalid data");
+        if (!userExist)
+            throw new AuthFailureError(
+                "The data is invalid or you have timed out"
+            );
 
         userExist.email = atob(userExist.email.split("@")[0]);
 
@@ -310,6 +315,7 @@ export class AccessService {
         clientAgent: string,
         clientIp: string
     ) {
+        console.log(accessToken + " | " + userEmail);
         if (!userEmail) throw new AuthFailureError(`Invalid client`);
 
         const payload = {
@@ -357,10 +363,12 @@ export class AccessService {
 
         console.log(passwordTokens);
 
+        const dateTimeResetPassword: number = Date.now() + 20 * 1000;
+
         const update = await this._accessRepo.updateUser({
             id: user.id,
             passwordResetToken: passwordTokens.passwordResetToken,
-            passwordResetExpires: 604800,
+            passwordResetExpires: String(dateTimeResetPassword),
         });
 
         const html = `Vui lòng click vào link dưới đây để thay đổi mật khẩu. Link này sẽ hết hạn sau 10 phút kể từ bây giờ. 
@@ -389,11 +397,17 @@ export class AccessService {
 
         console.log(passwordResetToken);
 
+        const dateNow = Date.now();
+
         const user = await this._accessRepo.findUser({
             passwordResetToken: passwordResetToken,
+            passwordResetExpires: String(dateNow),
         });
 
-        if (!user) throw new AuthFailureError("Invalid value");
+        if (!user)
+            throw new AuthFailureError(
+                "The data is invalid or you have timed out"
+            );
         console.log(user);
 
         const hashedPassword = await this.hasdData(password);
@@ -403,7 +417,7 @@ export class AccessService {
             password: hashedPassword,
             passwordResetToken: "",
             passwordChangedAt: Date.now().toString(),
-            passwordResetExpires: undefined,
+            passwordResetExpires: "",
         });
 
         return update;

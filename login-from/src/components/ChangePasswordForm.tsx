@@ -10,8 +10,9 @@ import {
 } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Loader from "./Loader";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { resetPassword } from "../api/authApi";
+import { toast } from "react-toastify";
 
 type Inputs = {
     password: string;
@@ -21,12 +22,12 @@ type Inputs = {
 
 const ChangePasswordForm = () => {
     const params = useParams();
+    const navigate = useNavigate();
 
     const {
         register,
         handleSubmit,
         getValues,
-        setValue,
         formState: { errors },
     } = useForm<Inputs>({
         defaultValues: {
@@ -36,7 +37,18 @@ const ChangePasswordForm = () => {
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         console.log(data);
-        await resetPassword(data);
+        await resetPassword(data)
+            .then((res) => {
+                console.log(res);
+                const status: number = res.status;
+
+                if (status === 200) {
+                    toast.success("Change password success");
+
+                    navigate("/");
+                }
+            })
+            .catch((error) => toast.error(error));
     };
 
     return (

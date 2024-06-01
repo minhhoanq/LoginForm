@@ -31,21 +31,21 @@ const SignupFrom = () => {
     } = useForm<Inputs>();
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
-        setOpen(true);
-        // await signup(data)
-        //     .then((res) => {
-        //         if (res) {
-        //             const status: number = res.status;
-        //             if (status === 201) {
-        //                 setOpen(true);
-        //             } else {
-        //                 throw new Error("");
-        //             }
-        //         } else {
-        //             throw new Error("");
-        //         }
-        //     })
-        //     .catch((error) => console.log(error));
+        // setOpen(true);
+        await signup(data)
+            .then((res) => {
+                if (res) {
+                    const status: number = res.status;
+                    if (status === 201) {
+                        setOpen(true);
+                    } else {
+                        throw new Error("");
+                    }
+                } else {
+                    throw new Error("");
+                }
+            })
+            .catch((error) => console.log(error));
     };
 
     return (

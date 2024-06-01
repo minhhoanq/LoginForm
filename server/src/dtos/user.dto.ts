@@ -78,7 +78,7 @@ export class Update {
 
     @IsNotEmpty()
     @IsNumber()
-    passwordResetExpires?: number;
+    passwordResetExpires?: string;
 }
 
 export class findFirst {
@@ -120,5 +120,5 @@ export class findFirst {
 
     @IsNotEmpty()
     @IsNumber()
-    passwordResetExpires?: number;
+    passwordResetExpires?: string;
 }
