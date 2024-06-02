@@ -11,7 +11,7 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
 import SubmitCodeModal from "./submitCodeModal";
-import { signup } from "../api/authApi";
+import { signup } from "../../api/authApi";
 
 type Inputs = {
     email: string;

@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import React from "react";
-import ChangePasswordForm from "../components/ChangePasswordForm";
+import ChangePasswordForm from "../components/common/ChangePasswordForm";
 
 export default function ChangePasswordPage() {
     return (

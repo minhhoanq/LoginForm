@@ -13,10 +13,10 @@ import {
     colors,
 } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { finalSignup } from "../api/authApi";
+import { finalSignup } from "../../api/authApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useAuthProvider } from "../context/UserProvider";
+import { useAuthProvider } from "../../context/UserProvider";
 
 type Inputs = {
     code: string;

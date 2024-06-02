@@ -1,4 +1,4 @@
-import SignoutForm from "../components/SignoutForm";
+import SignoutForm from "../components/common/SignoutForm";
 import { Stack, Typography } from "@mui/material";
 
 function Home(props: any) {

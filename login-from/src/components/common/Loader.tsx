@@ -2,7 +2,7 @@ import Modal from "@mui/material/Modal";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Stack } from "@mui/material";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "../../redux/store";
 
 export default function Loader() {
     const loading = useSelector((state: RootState) => state.global.loading);

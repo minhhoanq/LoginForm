@@ -1,4 +1,4 @@
-import SigninFrom from "../components/SigninForm";
+import SigninFrom from "../components/common/SigninForm";
 import { Grid } from "@mui/material";
 import assets from "../assets";
 

@@ -1,18 +1,13 @@
 import { CssBaseline, GlobalStyles } from "@mui/material";
-import SigninPage from "./pages/SigninPage";
-import SignupPage from "./pages/SignupPage";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Home from "./pages/Home";
+import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { UserProvider } from "./context/UserProvider";
-import ProtectedRoute from "./routes/ProtectedRoute";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import useAuth from "./hooks/useAuth";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import ChangePasswordPage from "./pages/ChangePasswordPage";
+import { publicRoutes } from "./routes/index";
 
 function App() {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -47,33 +42,11 @@ function App() {
     return (
         <div>
             <UserProvider>
-                <Router>
-                    <div className="App">
-                        <CssBaseline />
-                        <GlobalStyles styles={globalStyles} />
-                        <Routes>
-                            <Route
-                                path={"/"}
-                                element={
-                                    <ProtectedRoute>
-                                        <Home user={user} />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route path="/sign-in" element={<SigninPage />} />
-                            <Route path="/sign-up" element={<SignupPage />} />
-                            <Route
-                                path="/forgot-password"
-                                element={<ForgotPasswordPage />}
-                            />
-
-                            <Route
-                                path="/reset-password/:tokenPassword"
-                                element={<ChangePasswordPage />}
-                            />
-                        </Routes>
-                    </div>
-                </Router>
+                <div className="App">
+                    <CssBaseline />
+                    <GlobalStyles styles={globalStyles} />
+                    <RouterProvider router={publicRoutes} />
+                </div>
             </UserProvider>
             <ToastContainer />
         </div>

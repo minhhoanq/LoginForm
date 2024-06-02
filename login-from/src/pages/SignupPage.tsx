@@ -1,4 +1,4 @@
-import SignupFrom from "../components/SignupForm";
+import SignupFrom from "../components/common/SignupForm";
 import { Box, Grid, colors } from "@mui/material";
 import assets from "../assets";
 
