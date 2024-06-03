@@ -14,7 +14,7 @@ export function SidebarMenuGroup({ menuGroup }: { menuGroup: SidebarGroup }) {
                     sx={{
                         marginLeft: 2,
                         color: colors.grey[500],
-                        fontSize: "0.9rem",
+                        fontSize: "0.7rem",
                         textTransform: "uppercase",
                     }}
                 >

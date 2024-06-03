@@ -1,6 +1,7 @@
 import React from "react";
 import {
     Avatar,
+    Badge,
     Box,
     Button,
     Container,
@@ -16,7 +17,14 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import { useSidebarToggle } from "../../hooks/useSidebarToggle";
 import MenuIcon from "@mui/icons-material/Menu";
 import AdbIcon from "@mui/icons-material/Adb";
-import { HEADER_ITEMS } from "../../constants/HEADER";
+import {
+    HEADER_ITEMS,
+    NOTI_ITEMS,
+    SETTING_ITEMS,
+} from "../../constants/HEADER";
+import Sidebar from "./sidebar/Sidebar";
+import MailIcon from "@mui/icons-material/Mail";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const drawerWidth = 240;
 
@@ -33,8 +41,7 @@ const AppBar = styled(MuiAppBar, {
         duration: theme.transitions.duration.leavingScreen,
     }),
     ...(open && {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
+        width: `calc(100%)`,
         transition: theme.transitions.create(["width, margin"], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
@@ -72,20 +79,6 @@ export default function Header() {
 
     return (
         <AppBar position="fixed" open={toggleCollapse}>
-            {/* <Toolbar>
-                <IconButton
-                    color="inherit"
-                    aria-label="open drawer"
-                    edge="start"
-                    onClick={handleDrawerOpen}
-                    sx={{
-                        marginRight: 5,
-                        ...(toggleCollapse && { display: "none" }),
-                    }}
-                >
-                    <MenuIcon />
-                </IconButton>
-            </Toolbar> */}
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <AdbIcon
@@ -115,45 +108,17 @@ export default function Header() {
                             display: { xs: "flex", md: "none" },
                         }}
                     >
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: "bottom",
-                                horizontal: "left",
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: "top",
-                                horizontal: "left",
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            sx={{
-                                display: { xs: "block", md: "none" },
-                            }}
-                        >
-                            {["Products", "Pricing", "Blog"].map((page) => (
-                                <MenuItem
-                                    key={page}
-                                    onClick={handleCloseNavMenu}
-                                >
-                                    <Typography textAlign="center">
-                                        {page}
-                                    </Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
+                        <Toolbar>
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                edge="start"
+                                onClick={handleDrawerOpen}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                        </Toolbar>
+                        <Sidebar />
                     </Box>
                     <AdbIcon
                         sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
@@ -193,7 +158,26 @@ export default function Header() {
                         ))}
                     </Box>
 
-                    <Box sx={{ flexGrow: 0 }}>
+                    <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                        <Box
+                            sx={{
+                                marginRight: 4,
+                            }}
+                        >
+                            {NOTI_ITEMS.map((noti, index) => (
+                                <IconButton
+                                    key={index}
+                                    size="large"
+                                    aria-label="show 4 new mails"
+                                    color="inherit"
+                                >
+                                    <Badge badgeContent={4} color="error">
+                                        {noti.icon}
+                                    </Badge>
+                                </IconButton>
+                            ))}
+                        </Box>
+
                         <Tooltip title="Open settings">
                             <IconButton
                                 onClick={handleOpenUserMenu}
@@ -221,18 +205,16 @@ export default function Header() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {["Profile", "Account", "Dashboard", "Logout"].map(
-                                (setting) => (
-                                    <MenuItem
-                                        key={setting}
-                                        onClick={handleCloseUserMenu}
-                                    >
-                                        <Typography textAlign="center">
-                                            {setting}
-                                        </Typography>
-                                    </MenuItem>
-                                )
-                            )}
+                            {SETTING_ITEMS.map((setting, index) => (
+                                <MenuItem
+                                    key={index}
+                                    onClick={handleCloseUserMenu}
+                                >
+                                    <Typography textAlign="center">
+                                        {setting.title}
+                                    </Typography>
+                                </MenuItem>
+                            ))}
                         </Menu>
                     </Box>
                 </Toolbar>

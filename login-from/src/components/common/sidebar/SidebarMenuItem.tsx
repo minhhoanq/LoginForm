@@ -1,10 +1,13 @@
 import { useState } from "react";
 import {
+    Icon,
     List,
     ListItem,
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Typography,
+    colors,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useSidebarToggle } from "../../../hooks/useSidebarToggle";
@@ -22,7 +25,7 @@ export function SidebarMenuItem({ item }: { item: SidebarItem }) {
         <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
                 sx={{
-                    minHeight: 48,
+                    minHeight: 32,
                     justifyContent: toggleCollapse ? "initial" : "center",
                     px: 2.5,
                 }}
@@ -37,12 +40,14 @@ export function SidebarMenuItem({ item }: { item: SidebarItem }) {
                 >
                     {item.icon}
                 </ListItemIcon>
-                <ListItemText
-                    primary={item.title}
+                <Typography
                     sx={{
-                        opacity: toggleCollapse ? 1 : 0,
+                        fontSize: "0.7rem",
+                        textTransform: "uppercase",
                     }}
-                />
+                >
+                    {item.title}
+                </Typography>
                 {toggleCollapse === true && item.subMenu && (
                     <ListItemIcon
                         sx={{

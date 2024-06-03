@@ -30,15 +30,21 @@ const closedMixin = (theme: Theme): CSSObject => ({
         duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: "hidden",
-    width: `calc(${theme.spacing(7)} + 1px)`,
+    // width: `calc(${theme.spacing(7)} + 1px)`,
+    // [theme.breakpoints.up("sm")]: {
+    //     width: `calc(${theme.spacing(8)} + 1px)`,
+    // },
+
+    width: `0px`,
     [theme.breakpoints.up("sm")]: {
-        width: `calc(${theme.spacing(8)} + 1px)`,
+        width: `0px`,
     },
 });
 
 const Drawer = styled(MuiDrawer, {
     shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
+    position: "fixed",
     width: drawerWidth,
     flexShrink: 0,
     whiteSpace: "nowrap",
@@ -71,24 +77,22 @@ export default function Sidebar() {
     };
 
     return (
-        <div>
-            <Drawer variant="permanent" open={toggleCollapse}>
-                <DrawerHeader>
-                    <IconButton onClick={handleDrawerOpen}>
-                        {theme.direction === "rtl" ? (
-                            <ChevronRightIcon />
-                        ) : (
-                            <ChevronLeftIcon />
-                        )}
-                    </IconButton>
-                </DrawerHeader>
-                <Divider />
-                <List>
-                    {SIDEBAR_ITEMS.map((item, index) => (
-                        <SidebarMenuGroup menuGroup={item} key={index} />
-                    ))}
-                </List>
-            </Drawer>
-        </div>
+        <Drawer variant="permanent" open={toggleCollapse}>
+            <DrawerHeader>
+                <IconButton onClick={handleDrawerOpen}>
+                    {theme.direction === "rtl" ? (
+                        <ChevronRightIcon />
+                    ) : (
+                        <ChevronLeftIcon />
+                    )}
+                </IconButton>
+            </DrawerHeader>
+            <Divider />
+            <List>
+                {SIDEBAR_ITEMS.map((item, index) => (
+                    <SidebarMenuGroup menuGroup={item} key={index} />
+                ))}
+            </List>
+        </Drawer>
     );
 }

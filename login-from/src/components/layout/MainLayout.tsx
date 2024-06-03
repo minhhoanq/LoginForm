@@ -22,9 +22,7 @@ function MainLayout() {
                     width: { sm: `calc(100% - ${sidebarWidth})` },
                 }}
             >
-                {/* <ProtectedRoute> */}
                 <Outlet />
-                {/* </ProtectedRoute> */}
             </Box>
         </Box>
     );
