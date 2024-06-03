@@ -1,16 +1,18 @@
 import React from "react";
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../common/Sidebar";
+import Sidebar from "../common/sidebar/Sidebar";
 import ProtectedRoute from "../../routes/ProtectedRoute";
 import { UserProvider } from "../../context/UserProvider";
+import Header from "../common/Header";
 
 const sidebarWidth = 350;
 
 function MainLayout() {
     return (
         <Box display={"flex"}>
-            <Sidebar />
+            <Header />
+            {/* <Sidebar /> */}
             <Box
                 component={"main"}
                 sx={{
