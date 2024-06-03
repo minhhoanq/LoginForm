@@ -75,7 +75,7 @@ const SigninFrom = () => {
                 <Stack
                     spacing={5}
                     sx={{
-                        width: "400px",
+                        width: "auto",
                     }}
                 >
                     <Stack>
@@ -83,6 +83,7 @@ const SigninFrom = () => {
                             variant="h4"
                             fontWeight={600}
                             color={colors.grey[800]}
+                            // fontSize={"1rem"}
                         >
                             Welcome
                         </Typography>

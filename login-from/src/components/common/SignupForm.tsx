@@ -64,7 +64,7 @@ const SignupFrom = () => {
                 <Stack
                     spacing={5}
                     sx={{
-                        width: "400px",
+                        width: "auto",
                     }}
                 >
                     <Stack>

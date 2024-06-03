@@ -2,6 +2,7 @@ export type SidebarItem = {
     title: string;
     path: string;
     icon?: JSX.Element;
+    iconActive?: JSX.Element;
     subMenu?: boolean;
     subMenuItem?: SidebarItem[];
 };
@@ -15,6 +16,7 @@ export type HeaderItem = {
     title: string;
     path: string;
     icon?: JSX.Element;
+    iconActive?: JSX.Element;
     subMenu?: boolean;
     subMenuItem?: SidebarItem[];
 };
@@ -23,4 +25,5 @@ export type SettingItem = {
     title: string;
     path: string;
     icon?: JSX.Element;
+    iconActive?: JSX.Element;
 };

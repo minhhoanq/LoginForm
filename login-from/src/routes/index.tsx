@@ -7,6 +7,8 @@ import Home from "../pages/Home";
 import ProtectedRoute from "../routes/ProtectedRoute";
 import ForgotPasswordPage from "../pages/ForgotPasswordPage";
 import ChangePasswordPage from "../pages/ChangePasswordPage";
+import { Product } from "../pages/Product";
+import { Pricing } from "../pages/Pricing";
 
 //public router
 export const publicRoutes = createBrowserRouter([
@@ -41,7 +43,7 @@ export const publicRoutes = createBrowserRouter([
         ],
     },
     {
-        path: "/reset-password:tokenPassword",
+        path: "/reset-password/:tokenPassword",
         element: <AppLayout />,
         children: [
             {
@@ -61,6 +63,16 @@ export const publicRoutes = createBrowserRouter([
             {
                 index: true,
                 element: <Home />,
+            },
+            {
+                path: "/product",
+                index: true,
+                element: <Product />,
+            },
+            {
+                path: "/pricing",
+                index: true,
+                element: <Pricing />,
             },
         ],
     },

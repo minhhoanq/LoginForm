@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-    Icon,
+    Box,
     List,
     ListItem,
     ListItemButton,
@@ -12,10 +12,13 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useSidebarToggle } from "../../../hooks/useSidebarToggle";
 import { SidebarItem } from "../../../types/types";
+import { Link, useLocation } from "react-router-dom";
 
 export function SidebarMenuItem({ item }: { item: SidebarItem }) {
     const [openSubMenu, setopenSubMenu] = useState(false);
     const { toggleCollapse } = useSidebarToggle();
+    const { pathname } = useLocation();
+    const isActive = pathname == item.path;
 
     const handleDraweropenSubMenu = () => {
         setopenSubMenu(!openSubMenu);
@@ -23,43 +26,54 @@ export function SidebarMenuItem({ item }: { item: SidebarItem }) {
 
     return (
         <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-                sx={{
-                    minHeight: 32,
-                    justifyContent: toggleCollapse ? "initial" : "center",
-                    px: 2.5,
-                }}
-                onClick={handleDraweropenSubMenu}
-            >
-                <ListItemIcon
+            <Link to={item.path}>
+                <Box
                     sx={{
-                        minWidth: 0,
-                        mr: toggleCollapse ? 3 : "auto",
-                        justifyContent: "center",
+                        backgroundColor: isActive ? "#ccc" : "none",
                     }}
                 >
-                    {item.icon}
-                </ListItemIcon>
-                <Typography
-                    sx={{
-                        fontSize: "0.7rem",
-                        textTransform: "uppercase",
-                    }}
-                >
-                    {item.title}
-                </Typography>
-                {toggleCollapse === true && item.subMenu && (
-                    <ListItemIcon
+                    <ListItemButton
                         sx={{
-                            minWidth: 0,
-                            ml: toggleCollapse ? 3 : "auto",
-                            justifyContent: "center",
+                            minHeight: 32,
+                            justifyContent: toggleCollapse
+                                ? "initial"
+                                : "center",
+                            px: 2.5,
                         }}
+                        onClick={handleDraweropenSubMenu}
                     >
-                        <ExpandMoreIcon />
-                    </ListItemIcon>
-                )}
-            </ListItemButton>
+                        <ListItemIcon
+                            sx={{
+                                minWidth: 0,
+                                mr: toggleCollapse ? 3 : "auto",
+                                justifyContent: "center",
+                            }}
+                        >
+                            {isActive ? item.iconActive : item.icon}
+                        </ListItemIcon>
+                        <Typography
+                            sx={{
+                                fontSize: "0.7rem",
+                                textTransform: "uppercase",
+                                fontWeight: isActive ? 600 : "none",
+                            }}
+                        >
+                            {item.title}
+                        </Typography>
+                        {toggleCollapse === true && item.subMenu && (
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 0,
+                                    ml: toggleCollapse ? 3 : "auto",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <ExpandMoreIcon />
+                            </ListItemIcon>
+                        )}
+                    </ListItemButton>
+                </Box>
+            </Link>
             {openSubMenu && (
                 <List
                     sx={{

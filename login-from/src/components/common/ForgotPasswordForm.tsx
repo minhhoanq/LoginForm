@@ -46,6 +46,7 @@ const ForgotPasswordForm = () => {
                 width: "100%",
                 maxWidth: "700px",
                 color: colors.grey[800],
+                p: 2,
             }}
         >
             <Loader />
@@ -53,7 +54,7 @@ const ForgotPasswordForm = () => {
                 <Stack
                     spacing={5}
                     sx={{
-                        width: "400px",
+                        width: "auto",
                     }}
                 >
                     <Stack>

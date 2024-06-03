@@ -16,7 +16,7 @@ import {
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import { useSidebarToggle } from "../../hooks/useSidebarToggle";
 import MenuIcon from "@mui/icons-material/Menu";
-import AdbIcon from "@mui/icons-material/Adb";
+import PetsIcon from "@mui/icons-material/Pets";
 import {
     HEADER_ITEMS,
     NOTI_ITEMS,
@@ -81,7 +81,7 @@ export default function Header() {
         <AppBar position="fixed" open={toggleCollapse}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <AdbIcon
+                    <PetsIcon
                         sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
                     />
                     <Typography
@@ -99,7 +99,7 @@ export default function Header() {
                             textDecoration: "none",
                         }}
                     >
-                        LOGO
+                        PETS
                     </Typography>
 
                     <Box
@@ -120,7 +120,7 @@ export default function Header() {
                         </Toolbar>
                         <Sidebar />
                     </Box>
-                    <AdbIcon
+                    <PetsIcon
                         sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
                     />
                     <Typography
@@ -139,7 +139,7 @@ export default function Header() {
                             textDecoration: "none",
                         }}
                     >
-                        LOGO
+                        PETS
                     </Typography>
                     <Box
                         sx={{

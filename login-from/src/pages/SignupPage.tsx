@@ -12,45 +12,34 @@ const SignupPage = () => {
 
     return (
         <Grid container sx={{ height: "100vh" }}>
-            <Grid item xs={4} sx={{ position: "relative", padding: 3 }}>
+            <Grid
+                item
+                xs={12}
+                sm={12}
+                md={4}
+                sx={{
+                    position: "relative",
+                    padding: 3,
+                    display: "flex",
+                    justifyContent: { sm: "center" },
+                }}
+            >
                 <SignupFrom />
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: "unser",
-                        width: `0%`,
-                        height: "100%",
-                        bgcolor: colors.grey[800],
-                        transition: "all 1s ease-in-out",
-                    }}
-                />
             </Grid>
             <Grid
                 item
-                xs={8}
+                xs={0}
+                sm={0}
+                md={8}
                 sx={{
                     position: "relative",
                     backgroundImage: `url(${bgImage})`,
                     backgroundPosition: "center",
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
+                    display: { xs: "none", sm: "block" },
                 }}
-            >
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: "unser",
-                        width: `0%`,
-                        height: "100%",
-                        bgcolor: colors.common.white,
-                        transition: "all 1s ease-in-out",
-                    }}
-                />
-            </Grid>
+            ></Grid>
         </Grid>
     );
 };

@@ -12,18 +12,32 @@ const SigninPage = () => {
 
     return (
         <Grid container sx={{ height: "100vh" }}>
-            <Grid item xs={4} sx={{ position: "relative", padding: 3 }}>
+            <Grid
+                item
+                xs={12}
+                sm={12}
+                md={4}
+                sx={{
+                    position: "relative",
+                    padding: 3,
+                    display: "flex",
+                    justifyContent: { sm: "center" },
+                }}
+            >
                 <SigninFrom />
             </Grid>
             <Grid
                 item
-                xs={8}
+                xs={0}
+                sm={0}
+                md={8}
                 sx={{
                     position: "relative",
                     backgroundImage: `url(${bgImage})`,
                     backgroundPosition: "center",
                     backgroundSize: "cover",
                     backgroundRepeat: "no-repeat",
+                    display: { xs: "none", sm: "block" },
                 }}
             ></Grid>
         </Grid>

@@ -60,6 +60,7 @@ const ChangePasswordForm = () => {
                 width: "100%",
                 maxWidth: "700px",
                 color: colors.grey[800],
+                p: 2,
             }}
         >
             <Loader />
@@ -67,7 +68,7 @@ const ChangePasswordForm = () => {
                 <Stack
                     spacing={5}
                     sx={{
-                        width: "500px",
+                        width: "auto",
                     }}
                 >
                     <Stack>
