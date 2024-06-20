@@ -74,6 +74,16 @@ export const publicRoutes = createBrowserRouter([
                 index: true,
                 element: <Pricing />,
             },
+            {
+                path: "/cart",
+                index: true,
+                element: <Pricing />,
+            },
+            {
+                path: "/notification",
+                index: true,
+                element: <Pricing />,
+            },
         ],
     },
 ]);

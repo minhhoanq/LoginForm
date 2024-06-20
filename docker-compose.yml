@@ -36,6 +36,16 @@ services:
             - "3000:3000"
         networks:
             - login-networks
+    nginx:
+        container_name: api-gateway
+        image: nginx:latest
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx/proxy.conf:/etc/nginx/conf.d/default.conf
+        networks:
+            - login-networks
+        restart: always
 
 networks:
     login-networks:
