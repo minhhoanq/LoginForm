@@ -5,3 +5,5 @@ export class UpdateSession {
     refreshToken?: string;
     expiredAt?: number;
 }
+
+export class temp {}
